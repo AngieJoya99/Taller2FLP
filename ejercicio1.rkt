@@ -69,7 +69,8 @@ Casos de prueba:
 )
 
 #|graph->vertices: List -> List
-usage: (graph->vertices g) = Crea una lista con los vértices del grafo g
+usage: (graph->vertices g) = Crea una lista con lo la palabra 'vertice
+y la lista de vértices del grafo g
 
 Casos de prueba:
 (graph->vertices (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))))
@@ -81,13 +82,14 @@ Casos de prueba:
   (lambda (g)
     (cond
       [(null? g) '()]
-      [else (cadr(cadr g))]
+      [else (cadr g)]
     )
   )
 )
 
 #|graph->edges List -> List
-usage: (graph->edges g) = Crea una lista con las aristas del grafo g
+usage: (graph->edges g) = Crea una lista con la palabra 'arista
+y la lista de aristas del grafo g
 
 Casos de prueba:
 (graph->edges (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))))
@@ -97,6 +99,42 @@ Casos de prueba:
 
 
 (define graph->edges
+  (lambda (g)
+    (cond
+      [(null? g) '()]
+      [else (caddr g)]
+    )
+  )
+)
+
+#|vertices->nodelist List -> List
+usage: (vertices->nodelist g) = Crea una lista con los vértices del grafo g
+
+Casos de prueba:
+(vertices->nodelist (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))))
+(vertices->nodelist (graph (vertice '(z x @ w)) (arista '((@ x) (x @) (c a) (w z) (w x) (@ z)))))
+(vertices->nodelist (graph (vertice '(1 6 a 8)) (arista '((8 1) (a 6) (6 a) (8 6)))))
+(vertices->nodelist (graph (vertice '()) (arista '())))|#
+
+(define vertices->nodelist
+  (lambda (g)
+    (cond
+      [(null? g) '()]
+      [else (cadr(cadr g))]
+    )
+  )
+)
+
+#|edges->pairs List -> List
+usage: (edges->pairs g) = Crea una lista con las aristas del grafo g
+
+Casos de prueba:
+(edges->pairs (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))))
+(edges->pairs (graph (vertice '(z x @ w)) (arista '((@ x) (x @) (c a) (w z) (w x) (@ z)))))
+(edges->pairs (graph (vertice '(1 6 a 8)) (arista '((8 1) (a 6) (6 a) (8 6)))))
+(edges->pairs (graph (vertice '()) (arista '())))|#
+
+(define edges->pairs
   (lambda (g)
     (cond
       [(null? g) '()]
@@ -121,13 +159,41 @@ Punto 2.1.2: Gramática en datatypes|#
 Punto 2.2.2 Unparse|#
 
 #|--------------------------------------------------------
-Punto 2.3.1 Add-edge|#
+Punto 2.3.1 Add-edge
+Gramática:
+<grafo-dirigido> ::= () | ('graph <vertice> <arista>)
+<vertice> ::= () | ('vertices <valor-de-scheme>+)
+<arista> ::= () | ('aristas (<valor-de-scheme> <valor-de-scheme>)+)
+
+add-edge grafo-dirigido x List -> grafo-dirigido
+usage: (add-edge g a) = Agrega la arista a al grafo dirigido g
+si esta no se encuentra ya dentro del grafo
+
+Casos de prueba
+|#
 
 (define add-edge
   (lambda (g a)
-    ('falta)
+    (letrec
+      (
+        [aristas (edges->pairs g)]
+        [arista-existe
+          (lambda (g)
+            (cond
+              [(null? g) #f]
+              [(equal? (car g) a) #t]
+              [else (arista-existe (cdr g))]
+            )                
+          )
+        ]
+      )
+      (if (equal? #t (arista-existe aristas)) (graph (graph->vertices g) (graph->edges g))
+        (graph (graph->vertices g) (arista(list (edges->pairs g) (a))))
+      )
+    )
   )
 )
+
 
 #|--------------------------------------------------------
 Punto 2.3.2 Vecinos-salientes|#
