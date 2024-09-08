@@ -10,12 +10,12 @@ usage: (juntarListas L1 L2) = Lista resultante de juntar los elementos de L1 con
 Gramática: <lista> := () | (<valor-de-scheme> <lista>)
 |#
 (define juntarListas
-    (lambda (L1 L2)
-        (cond
-            [(null? L1) L2]
-            [else (cons (car L1) (juntarListas (cdr L1) L2))]
-        )
+  (lambda (L1 L2)
+    (cond
+      [(null? L1) L2]
+      [else (cons (car L1) (juntarListas (cdr L1) L2))]
     )
+  )
 )
 
 #|-----------------------------------------------------------
@@ -29,7 +29,7 @@ vertice: List -> vertice
 usage: (vertice v) = Crea una lista con la representación de los vertices v:
 la cabeza es la palabra 'vertices y la cola es la lista v
 
-Casos de prueba
+Casos de prueba:
 (vertice '(a b c))
 (vertice '(z x @ w))
 (vertice '(1 6 a 8))
@@ -45,11 +45,11 @@ Casos de prueba
   )
 )
 
-#|arista List -> arista
+#|arista: List -> arista
 usage: (arista a) = Crea una lista con la representación de las aristas a:
 la cabeza es la palabra 'aristas y la cola es la lista a
 
-Casos de prueba
+Casos de prueba:
 (arista '((a b) (b c) (c a)))
 (arista '((@ x) (x @) (c a) (w z) (w x) (@ z)))
 (arista '((8 1) (a 6) (6 a) (8 6)))
@@ -101,7 +101,7 @@ Casos de prueba:
   )
 )
 
-#|graph->edges grafo-dirigido -> arista
+#|graph->edges: grafo-dirigido -> arista
 usage: (graph->edges g) = Crea una lista con la palabra 'arista
 y la lista de aristas del grafo g
 
@@ -121,7 +121,7 @@ Casos de prueba:
   )
 )
 
-#|vertices->nodelist vertice -> List
+#|vertices->nodelist: vertice -> List
 usage: (vertices->nodelist g) = Crea una lista con los vértices del grafo g
 
 Casos de prueba:
@@ -139,7 +139,7 @@ Casos de prueba:
   )
 )
 
-#|edges->pairs arista -> List
+#|edges->pairs: arista -> List
 usage: (edges->pairs g) = Crea una lista con las aristas del grafo g
 
 Casos de prueba:
@@ -179,7 +179,7 @@ Gramática:
 <vertice> ::= () | ('vertices <valor-de-scheme>+)
 <arista> ::= () | ('aristas (<valor-de-scheme> <valor-de-scheme>)+)
 
-add-edge grafo-dirigido x List -> grafo-dirigido
+add-edge: grafo-dirigido x List -> grafo-dirigido
 usage: (add-edge g a) = Agrega la arista a al grafo dirigido g
 si esta no se encuentra ya dentro del grafo
 
@@ -187,6 +187,8 @@ Casos de prueba:
 (add-edge (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))) '(a b))
 (add-edge (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))) '(a c))
 (add-edge (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))) '(b a))
+(add-edge '() '(b a))
+(add-edge (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))) '())
 |#
 
 (define add-edge
@@ -194,6 +196,8 @@ Casos de prueba:
     (letrec
       (
         [aristas (edges->pairs (graph->edges g))]
+        #|arista-existe: grafo-dirigido-> Boolean
+        usage: (arista-existe g) = retorna #t si el a es una arista de g y #f si no|#
         [arista-existe
           (lambda (g)
             (cond
@@ -204,8 +208,11 @@ Casos de prueba:
           )
         ]
       )
-      (if (equal? #t (arista-existe aristas)) (graph (graph->vertices g) (graph->edges g))
-        (graph (graph->vertices g) (arista(juntarListas aristas (list a))))
+      (cond
+        [(null? g) '()]
+        [(null? a) g]
+        [(equal? #t (arista-existe aristas)) g]
+        [else (graph (graph->vertices g) (arista(juntarListas aristas (list a)))) ]
       )
     )
   )
