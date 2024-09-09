@@ -21,9 +21,9 @@ Gramática: <lista> := () | (<valor-de-scheme> <lista>)
 #|-----------------------------------------------------------
 Punto 2.1.1: Gramática en listas
 Gramática:
-<grafo-dirigido> ::= () | ('graph <vertice> <arista>)
-<vertice> ::= () | ('vertices <valor-de-scheme>+)
-<arista> ::= () | ('aristas (<valor-de-scheme> <valor-de-scheme>)+)
+<grafo-dirigido> ::= ('graph <vertice> <arista>)
+<vertice> ::= ('vertices (<valor-de-scheme>)+)
+<arista> ::= ('aristas (<valor-de-scheme> <valor-de-scheme>)*)
 
 vertice: List -> vertice
 usage: (vertice v) = Crea una lista con la representación de los vertices v:
@@ -33,15 +33,12 @@ Casos de prueba:
 (vertice '(a b c))
 (vertice '(z x @ w))
 (vertice '(1 6 a 8))
-(vertice '())
+(vertice '(y))
 |#
 
 (define vertice
   (lambda (v)
-    (cond
-      [(null? v) '()]
-      [else (list 'vertices v)]
-    )
+    (list 'vertices v)
   )
 )
 
@@ -58,7 +55,7 @@ Casos de prueba:
 (define arista
   (lambda (a)
     (cond
-      [(null? a) '()]
+      [(null? a) (list 'aristas '())]
       [else (list 'aristas a)]
     )
   )
@@ -71,14 +68,11 @@ Casos de prueba:
 (graph (vertice '(a b c)) (arista '((a b) (b c) (c a))))
 (graph (vertice '(z x @ w)) (arista '((@ x) (x @) (c a) (w z) (w x) (@ z))))
 (graph (vertice '(1 6 a 8)) (arista '((8 1) (a 6) (6 a) (8 6))))
-(graph (vertice '()) (arista '()))|#
+(graph (vertice '(y)) (arista '()))|#
 
 (define graph
   (lambda (v a)
-    (cond
-      [(and (null? v) (null? a)) '()]
-      [else (list 'graph  v a)]
-    )
+    (list 'graph  v a)
   )
 )
 
@@ -90,14 +84,11 @@ Casos de prueba:
 (graph->vertices (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))))
 (graph->vertices (graph (vertice '(z x @ w)) (arista '((@ x) (x @) (c a) (w z) (w x) (@ z)))))
 (graph->vertices (graph (vertice '(1 6 a 8)) (arista '((8 1) (a 6) (6 a) (8 6)))))
-(graph->vertices (graph (vertice '()) (arista '())))|#
+(graph->vertices (graph (vertice '(y)) (arista '())))|#
 
 (define graph->vertices
   (lambda (g)
-    (cond
-      [(null? g) '()]
-      [else (cadr g)]
-    )
+    (cadr g)
   )
 )
 
@@ -109,15 +100,12 @@ Casos de prueba:
 (graph->edges (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))))
 (graph->edges (graph (vertice '(z x @ w)) (arista '((@ x) (x @) (c a) (w z) (w x) (@ z)))))
 (graph->edges (graph (vertice '(1 6 a 8)) (arista '((8 1) (a 6) (6 a) (8 6)))))
-(graph->edges (graph (vertice '()) (arista '())))|#
+(graph->edges (graph (vertice '(y)) (arista '())))|#
 
 
 (define graph->edges
   (lambda (g)
-    (cond
-      [(null? g) '()]
-      [else (caddr g)]
-    )
+    (caddr g)
   )
 )
 
@@ -128,14 +116,11 @@ Casos de prueba:
 (vertices->nodelist (vertice '(a b c)))
 (vertices->nodelist (vertice '(z x @ w)))
 (vertices->nodelist (vertice '(1 6 a 8)))
-(vertices->nodelist (vertice '()))|#
+(vertices->nodelist (vertice '(y)))|#
 
 (define vertices->nodelist
   (lambda (v)
-    (cond
-      [(null? v) '()]
-      [else (cadr v)]
-    )
+    (cadr v)
   )
 )
 
@@ -175,9 +160,9 @@ Punto 2.2.2 Unparse|#
 #|--------------------------------------------------------
 Punto 2.3.1 Add-edge
 Gramática:
-<grafo-dirigido> ::= () | ('graph <vertice> <arista>)
-<vertice> ::= () | ('vertices <valor-de-scheme>+)
-<arista> ::= () | ('aristas (<valor-de-scheme> <valor-de-scheme>)+)
+<grafo-dirigido> ::= ('graph <vertice> <arista>)
+<vertice> ::= ('vertices (<valor-de-scheme>)+)
+<arista> ::= ('aristas (<valor-de-scheme> <valor-de-scheme>)*)
 
 add-edge: grafo-dirigido x List -> grafo-dirigido
 usage: (add-edge g a) = Agrega la arista a al grafo dirigido g
@@ -187,7 +172,6 @@ Casos de prueba:
 (add-edge (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))) '(a b))
 (add-edge (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))) '(a c))
 (add-edge (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))) '(b a))
-(add-edge '() '(b a))
 (add-edge (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))) '())
 |#
 
@@ -209,7 +193,6 @@ Casos de prueba:
         ]
       )
       (cond
-        [(null? g) '()]
         [(null? a) g]
         [(equal? #t (arista-existe aristas)) g]
         [else (graph (graph->vertices g) (arista(juntarListas aristas (list a)))) ]
