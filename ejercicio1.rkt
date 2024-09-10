@@ -145,6 +145,18 @@ Casos de prueba:
 #|--------------------------------------------------------
 Punto 2.1.2: Gramática en datatypes|#
 
+#|(define-datatype graph-type graph-type?
+  (graph-exp
+    (vertices-exp (list-of symbol?))
+    (edges-exp (list-of edges?)) 
+  )
+)
+
+(define-datatype edges edges?
+  (empty-edge)
+  (edge-exp (left-edge symbol?) (right-edge symbol?))
+)|#
+
 #|Punto 2.2.1 Parse|#
 
 (define PARSEBNF
