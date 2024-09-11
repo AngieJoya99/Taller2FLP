@@ -151,18 +151,22 @@ Gramática:
 <arista> ::= ('aristas (<valor-de-scheme> <valor-de-scheme>)*)
 |#
 
-(define-datatype edges-exp edges-exp?
+(define-datatype graph-type graph-type?
+  (graph-exp (v vertices-type?)(e edges-type?)) 
+)
+
+(define-datatype vertices-type vertices-type?
+  (vertices-exp (ve(list-of symbol?)))
+)
+
+(define-datatype edges-type edges-type?
   (empty-edge)
+  (edges-exp (ed(list-of edges?)))
+)
+
+(define-datatype edges edges?
   (edge-exp (left-edge symbol?) (right-edge symbol?))
 )
-
-(define-datatype graph-type graph-type?
-  (graph-exp
-    (vertices-exp (list-of symbol?))
-    (edges-exp (list-of edges-exp?)) 
-  )
-)
-
 #|Punto 2.2.1 Parse|#
 
 (define PARSEBNF
