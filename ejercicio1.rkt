@@ -160,7 +160,6 @@ Gramática:
 )
 
 (define-datatype edges-type edges-type?
-  (empty-edge)
   (edges-exp (ed(list-of edges?)))
 )
 
@@ -178,6 +177,43 @@ Gramática:
 
 #|--------------------------------------------------------
 Punto 2.2.2 Unparse|#
+
+(define UNPARSEBNF
+  (lambda (exp)
+    (cases graph-type exp
+      (graph-exp (v e)
+                 (letrec 
+                    (
+                     (ver (cases vertices-type v
+                        (vertices-exp (ve) (list 'vertices ve))))
+                     (edgess (unparse-edge e))
+                    )
+                   (list 'graph ver (list 'edges edgess))
+                  )
+      )
+    )
+  )
+)
+
+(define unparse-edges
+  (lambda (exp)
+    (cases edges exp
+      (edge-exp (left-edge right-edge) (list left-edge right-edge))
+    )
+  )
+)
+
+(define unparse-edge
+  (lambda (exp)
+    (cases edges-type exp
+      (edges-exp (ed) (if (null? ed)
+                          empty
+                          (cons (unparse-edges(car ed))(unparse-edge (edges-exp(cdr ed))))
+                      )
+      )
+    )
+  )
+)
 
 #|--------------------------------------------------------
 Punto 2.3.1 Add-edge
@@ -227,6 +263,55 @@ Casos de prueba:
 #|--------------------------------------------------------
 Punto 2.3.2 Vecinos-salientes|#
 
+(define vecinos-salientes
+  (lambda (g ar)
+    (letrec
+          (
+            (unparse (UNPARSEBNF g))
+            (aristas (cadr(graph->edges unparse)))
+            (aux
+              (lambda (L1 AR)
+                (cond
+                  [(null? L1) empty]
+                  [(pair? (car L1))
+                          (if (eqv? (caar L1) AR)
+                              (cons (cadr(car L1))(aux (cdr L1) AR))
+                              (aux (cdr L1) AR))
+                  ]
+                  [else empty]
+                )
+              )
+            )
+          )
+          (aux aristas ar)
+    )
+  )
+)
+
 #|--------------------------------------------------------
 Punto 2.3.3 Vecinos-entrantes|#
  
+(define vecinos-entrantes
+  (lambda (g ar)
+    (letrec
+          (
+            (unparse (UNPARSEBNF g))
+            (aristas (cadr(graph->edges unparse)))
+            (aux
+              (lambda (L1 AR)
+                (cond
+                  [(null? L1) empty]
+                  [(pair? (car L1))
+                          (if (eqv? (cadr(car L1)) AR)
+                              (cons (caar L1)(aux (cdr L1) AR))
+                              (aux (cdr L1) AR))
+                  ]
+                  [else empty]
+                 )
+               )
+             )
+          )
+          (aux aristas ar)
+    )
+  )
+)
