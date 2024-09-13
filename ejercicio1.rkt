@@ -169,10 +169,24 @@ Gramática:
 #|Punto 2.2.1 Parse|#
 
 (define PARSEBNF
-  (lambda (g)
-    ('falta)
+  (lambda (exp)
+    (cond
+      [(equal? (car exp) 'graph) (graph-exp (PARSEBNF (cadr exp))(PARSEBNF (caddr exp)))]
+      [(equal? (car exp) 'vertices) (vertices-exp (cadr exp))]
+      [(equal? (car exp) 'edges) (edges-exp (parse-edges (cadr exp)))]
+    )
   )
+)
 
+(define parse-edges
+  (lambda (exp)
+    (cond
+      [(null? exp) empty]
+      [(pair? (car exp))
+       (cons (edge-exp (caar exp)(cadr(car exp)))(parse-edges(cdr exp)))
+      ]
+    )
+  )
 )
 
 #|--------------------------------------------------------
