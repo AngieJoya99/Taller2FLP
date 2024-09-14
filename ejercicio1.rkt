@@ -277,27 +277,35 @@ Casos de prueba:
 #|--------------------------------------------------------
 Punto 2.3.2 Vecinos-salientes|#
 
-(define vecinos-salientes
-  (lambda (g ar)
-    (letrec
-          (
-            (unparse (UNPARSEBNF g))
-            (aristas (cadr(graph->edges unparse)))
-            (aux
-              (lambda (L1 AR)
-                (cond
-                  [(null? L1) empty]
-                  [(pair? (car L1))
-                          (if (eqv? (caar L1) AR)
-                              (cons (cadr(car L1))(aux (cdr L1) AR))
-                              (aux (cdr L1) AR))
-                  ]
-                  [else empty]
+(define Vecinos-salientes
+  (lambda (exp ar)
+    (cases graph-type exp
+      (graph-exp (v e) (aux-vs-edges e ar))
+    )
+  )
+)
+
+(define aux-vs-edges
+  (lambda (exp ar)
+    (cases edges-type exp
+      (edges-exp (ed) (if (null? ed)
+                          empty
+                          (append (aux-vs-edge(car ed) ar)(aux-vs-edges (edges-exp(cdr ed)) ar))
+                      )
+      )
+    )
+  )
+)
+
+(define aux-vs-edge
+  (lambda (exp ar)
+    (cases edges exp
+      (edge-exp (left-edge right-edge)
+                (if (equal? left-edge ar)
+                    (list right-edge)
+                    empty
                 )
-              )
-            )
-          )
-          (aux aristas ar)
+      )
     )
   )
 )
@@ -305,27 +313,35 @@ Punto 2.3.2 Vecinos-salientes|#
 #|--------------------------------------------------------
 Punto 2.3.3 Vecinos-entrantes|#
  
-(define vecinos-entrantes
-  (lambda (g ar)
-    (letrec
-          (
-            (unparse (UNPARSEBNF g))
-            (aristas (cadr(graph->edges unparse)))
-            (aux
-              (lambda (L1 AR)
-                (cond
-                  [(null? L1) empty]
-                  [(pair? (car L1))
-                          (if (eqv? (cadr(car L1)) AR)
-                              (cons (caar L1)(aux (cdr L1) AR))
-                              (aux (cdr L1) AR))
-                  ]
-                  [else empty]
-                 )
-               )
-             )
-          )
-          (aux aristas ar)
+(define Vecinos-entrantes
+  (lambda (exp ar)
+    (cases graph-type exp
+      (graph-exp (v e) (aux-ve-edges e ar))
+    )
+  )
+)
+
+(define aux-ve-edges
+  (lambda (exp ar)
+    (cases edges-type exp
+      (edges-exp (ed) (if (null? ed)
+                          empty
+                          (append (aux-ve-edge(car ed) ar)(aux-ve-edges (edges-exp(cdr ed)) ar))
+                      )
+      )
+    )
+  )
+)
+
+(define aux-ve-edge
+  (lambda (exp ar)
+    (cases edges exp
+      (edge-exp (left-edge right-edge)
+                (if (equal? right-edge ar)
+                    (list left-edge)
+                    empty
+                )
+      )
     )
   )
 )
