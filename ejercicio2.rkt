@@ -18,7 +18,30 @@ Emily Nuñez - 2240156|#
 (define-datatype edges edges?
   (edge-exp (left-edge symbol?) (right-edge symbol?))
 )
-#|Punto 2.2.1 Parse|#
+#|Punto 2.2.1 Parse
+
+usage: Dada una lista con la representacion concreta de un grafo dirigido, construye el arbol de 
+sintaxis abstracta basado en datatypes. 
+
+Gramática parámetro:
+<graph>       ::= ('graph <vertices> <edges>)
+<vertices>    ::= ('vertices (<symbol>)+)
+<edges>       ::= ('edges <edge>)
+<edge>        ::= (<symbol> <symbol>)
+              ::= (<symbol> <symbol>)<edge>
+
+Gramática respuesta:
+<graph-type>   ::= ('graph <vertices-type> <edges-type>)
+<vertice-type> ::= ('vertices (<symbol>)+)
+<edges-type>   ::= ('edges-exp <edges>)
+<edges>        ::= ('edge_exp <symbol> <symbol>)
+               ::= ('edge_exp <symbol><symbol>)<edge-exp>
+
+Casos de prueba:
+(PARSEBNF '(graph (vertices (a b c d)) (edges ((a b) (c d) (c b) (a c)))))
+(PARSEBNF '(graph (vertices (x y z w)) (edges ((x y) (y z) (z w) (w x)))))
+(PARSEBNF '(graph (vertices (p q r s)) (edges ((p q) (q r) (r s) (s p) (p r)))))
+|#
 
 (define PARSEBNF
   (lambda (exp)
@@ -30,6 +53,15 @@ Emily Nuñez - 2240156|#
   )
 )
 
+
+#|
+  Usage: Procesa una lista de aristas y las convierte en una estructura de datos que sigue el formato edge-exp
+
+  Casos de prueba:
+  (parse-edges '((a b) (c d) (c b) (a c)))
+  (parse-edges '((x y) (y z) (z w) (w x)))
+  (parse-edges '((p q) (q r) (r s) (s p) (p r)))
+|#
 (define parse-edges
   (lambda (exp)
     (cond
@@ -42,7 +74,61 @@ Emily Nuñez - 2240156|#
 )
 
 #|--------------------------------------------------------
-Punto 2.2.2 Unparse|#
+Punto 2.2.2 Unparse
+
+usage: Dado un arbol de sintaxis abstracta de un grafo dirigido, 
+entrega la representacion concreta basada en listas.
+
+Gramática parámetro:
+<graph-type>   ::= ('graph <vertices-type> <edges-type>)
+<vertice-type> ::= ('vertices (<symbol>)+)
+<edges-type>   ::= ('edges-exp <edges>)
+<edges>        ::= ('edge_exp <symbol> <symbol>)
+               ::= ('edge_exp <symbol><symbol>)<edge-exp>
+
+Gramática respuesta:
+<graph>       ::= ('graph <vertices> <edges>)
+<vertices>    ::= ('vertices (<symbol>)+)
+<edges>       ::= ('edges <edge>)
+<edge>        ::= (<symbol> <symbol>)
+              ::= (<symbol> <symbol>)<edge>
+
+Casos de prueba:
+(UNPARSEBNF (graph-exp
+    (vertices-exp (list 'a 'b 'c 'd))
+    (edges-exp(list
+      (edge-exp 'a 'b) 
+      (edge-exp 'c 'd)
+      (edge-exp 'c 'b)
+      (edge-exp 'a 'c)
+    ))
+  )
+)
+
+(UNPARSEBNF (graph-exp
+    (vertices-exp (list 'x 'y 'z 'w))
+    (edges-exp (list
+      (edge-exp 'x 'y)
+      (edge-exp 'y 'z)
+      (edge-exp 'z 'w)
+      (edge-exp 'w 'x)
+    ))
+  )
+)
+
+(UNPARSEBNF (graph-exp
+    (vertices-exp (list 'p 'q 'r 's))
+    (edges-exp (list
+      (edge-exp 'p 'q)
+      (edge-exp 'q 'r)
+      (edge-exp 'r 's)
+      (edge-exp 's 'p)
+      (edge-exp 'p 'r)
+    ))
+  )
+)
+
+|#
 
 (define UNPARSEBNF
   (lambda (exp)
@@ -61,6 +147,15 @@ Punto 2.2.2 Unparse|#
   )
 )
 
+#|
+  Usage: Toma una arista de tipo edge-exp y la convierte nuevamente en una lista de dos elementos, que 
+  representa los dos vértices de la arista.
+
+  Casos de prueba:
+  (unparse-edges (edge-exp 'a 'b))
+  (unparse-edges (edge-exp 'x 'y))
+  (unparse-edges (edge-exp 'p 'q))
+|#
 (define unparse-edges
   (lambda (exp)
     (cases edges exp
@@ -69,6 +164,15 @@ Punto 2.2.2 Unparse|#
   )
 )
 
+#|
+  Usage: Toma una lista de aristas (edges-exp) y la convierte en una lista de listas, donde cada lista 
+  interna representa una arista como un par de vértices.
+
+  Casos de prueba:
+  (unparse-edge (edges-exp(list (edge-exp 'a 'b)(edge-exp 'c 'd)(edge-exp 'c 'b)(edge-exp 'a 'c))))
+  (unparse-edge (edges-exp (list (edge-exp 'x 'y)(edge-exp 'y 'z)(edge-exp 'z 'w)(edge-exp 'w 'x))))
+  (unparse-edge (edges-exp (list (edge-exp 'p 'q)(edge-exp 'q 'r)(edge-exp 'r 's)(edge-exp 's 'p)(edge-exp 'p 'r))))
+|#
 (define unparse-edge
   (lambda (exp)
     (cases edges-type exp

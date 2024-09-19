@@ -129,10 +129,53 @@ Casos de prueba:
 
 #|--------------------------------------------------------
 
+usage: Define una estructura de datos para representar grafos dirigidos
+
 Gramática:
-<grafo-dirigido> ::= ('graph <vertice> <arista>)
-<vertice> ::= ('vertices (<valor-de-scheme>)+)
-<arista> ::= ('aristas (<valor-de-scheme> <valor-de-scheme>)*)
+<graph-type>   ::= ('graph <vertices-type> <edges-type>)
+<vertice-type> ::= ('vertices (<symbol>)+)
+<edges-type>   ::= ('edges-exp <edges>)
+<edges>        ::= ('edge_exp <symbol> <symbol>)
+               ::= ('edge_exp <symbol><symbol>)<edge-exp>
+
+Casos de prueba:
+
+(define grafo
+  (graph-exp
+    (vertices-exp (list 'a 'b 'c 'd))  ; Lista de vértices
+    (edges-exp(list
+      (edge-exp 'a 'b)  ; Arista entre 'a' y 'b'
+      (edge-exp 'c 'd)  ; Arista entre 'c' y 'd'
+      (edge-exp 'c 'b)  ; Arista entre 'c' y 'b'
+      (edge-exp 'a 'c)  ; Arista entre 'a' y 'c'
+    ))
+  )
+)
+
+(define grafo2
+  (graph-exp
+    (vertices-exp (list 'x 'y 'z 'w))  ; Lista de vértices
+    (edges-exp (list
+      (edge-exp 'x 'y)  ; Arista entre 'x' y 'y'
+      (edge-exp 'y 'z)  ; Arista entre 'y' y 'z'
+      (edge-exp 'z 'w)  ; Arista entre 'z' y 'w'
+      (edge-exp 'w 'x)  ; Arista entre 'w' y 'x'
+    ))
+  )
+)
+
+(define grafo3
+  (graph-exp
+    (vertices-exp (list 'p 'q 'r 's))  ; Lista de vértices
+    (edges-exp (list
+      (edge-exp 'p 'q)  ; Arista entre 'p' y 'q'
+      (edge-exp 'q 'r)  ; Arista entre 'q' y 'r'
+      (edge-exp 'r 's)  ; Arista entre 'r' y 's'
+      (edge-exp 's 'p)  ; Arista entre 's' y 'p'
+      (edge-exp 'p 'r)  ; Arista adicional entre 'p' y 'r'
+    ))
+  )
+)
 |#
 
 (define-datatype graph-type graph-type?
