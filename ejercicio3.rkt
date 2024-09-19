@@ -68,7 +68,6 @@ Gramática: <lista> := () | (<valor-de-scheme> <lista>)
   )
 )
 
-#|-----------------------------------------------------|#
 (define-datatype graph-type graph-type?
   (graph-exp (v vertices-type?)(e edges-type?)) 
 )
@@ -90,8 +89,8 @@ Gramática: <lista> := () | (<valor-de-scheme> <lista>)
 Punto 2.3.1 Add-edge
 Gramática:
 <grafo-dirigido> ::= ('graph <vertice> <arista>)
-<vertice> ::= ('vertices (<valor-de-scheme>)+)
-<arista> ::= ('aristas (<valor-de-scheme> <valor-de-scheme>)*)
+<vertice> ::= ('vertices (<symbol>)+)
+<arista> ::= ('aristas (<symbol> <symbol>)*)
 
 add-edge: grafo-dirigido x List -> grafo-dirigido
 usage: (add-edge g a) = Agrega la arista a al grafo dirigido g

@@ -7,8 +7,8 @@ Emily Nuñez - 2240156|#
 Punto 2.1.1: Gramática en listas
 Gramática:
 <grafo-dirigido> ::= ('graph <vertice> <arista>)
-<vertice> ::= ('vertices (<valor-de-scheme>)+)
-<arista> ::= ('aristas (<valor-de-scheme> <valor-de-scheme>)*)
+<vertice> ::= ('vertices (<symbol>)+)
+<arista> ::= ('aristas (<symbol> <symbol>)*)
 
 vertice: List -> vertice
 usage: (vertice v) = Crea una lista con la representación de los vertices v:
@@ -16,8 +16,7 @@ la cabeza es la palabra 'vertices y la cola es la lista v
 
 Casos de prueba:
 (vertice '(a b c))
-(vertice '(z x @ w))
-(vertice '(1 6 a 8))
+(vertice '(ñ x @ *))
 (vertice '(y))
 |#
 
@@ -33,8 +32,7 @@ la cabeza es la palabra 'aristas y la cola es la lista a
 
 Casos de prueba:
 (arista '((a b) (b c) (c a)))
-(arista '((@ x) (x @) (c a) (w z) (w x) (@ z)))
-(arista '((8 1) (a 6) (6 a) (8 6)))
+(arista '((@ x) (x *) (x ñ) (ñ x) (@ *)))
 (arista '())|#
 
 (define arista
@@ -51,8 +49,7 @@ usage: (graph v a) = Crea una lista que representa el grafo dirigido de vértice
 
 Casos de prueba:
 (graph (vertice '(a b c)) (arista '((a b) (b c) (c a))))
-(graph (vertice '(z x @ w)) (arista '((@ x) (x @) (c a) (w z) (w x) (@ z))))
-(graph (vertice '(1 6 a 8)) (arista '((8 1) (a 6) (6 a) (8 6))))
+(graph (vertice '(ñ x @ *)) (arista '((@ x) (x *) (x ñ) (ñ x) (@ *))))
 (graph (vertice '(y)) (arista '()))|#
 
 (define graph
@@ -67,8 +64,7 @@ y la lista de vértices del grafo g
 
 Casos de prueba:
 (graph->vertices (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))))
-(graph->vertices (graph (vertice '(z x @ w)) (arista '((@ x) (x @) (c a) (w z) (w x) (@ z)))))
-(graph->vertices (graph (vertice '(1 6 a 8)) (arista '((8 1) (a 6) (6 a) (8 6)))))
+(graph->vertices (graph (vertice '(ñ x @ *)) (arista '((@ x) (x *) (x ñ) (ñ x) (@ *)))))
 (graph->vertices (graph (vertice '(y)) (arista '())))|#
 
 (define graph->vertices
@@ -83,8 +79,7 @@ y la lista de aristas del grafo g
 
 Casos de prueba:
 (graph->edges (graph (vertice '(a b c)) (arista '((a b) (b c) (c a)))))
-(graph->edges (graph (vertice '(z x @ w)) (arista '((@ x) (x @) (c a) (w z) (w x) (@ z)))))
-(graph->edges (graph (vertice '(1 6 a 8)) (arista '((8 1) (a 6) (6 a) (8 6)))))
+(graph->edges (graph (vertice '(ñ x @ *)) (arista '((@ x) (x *) (x ñ) (ñ x) (@ *)))))
 (graph->edges (graph (vertice '(y)) (arista '())))|#
 
 
@@ -99,8 +94,7 @@ usage: (vertices->nodelist g) = Crea una lista con los vértices del grafo g
 
 Casos de prueba:
 (vertices->nodelist (vertice '(a b c)))
-(vertices->nodelist (vertice '(z x @ w)))
-(vertices->nodelist (vertice '(1 6 a 8)))
+(vertices->nodelist (vertice '(ñ x @ *)))
 (vertices->nodelist (vertice '(y)))|#
 
 (define vertices->nodelist
@@ -114,8 +108,7 @@ usage: (edges->pairs g) = Crea una lista con las aristas del grafo g
 
 Casos de prueba:
 (edges->pairs (arista '((a b) (b c) (c a))))
-(edges->pairs (arista '((@ x) (x @) (c a) (w z) (w x) (@ z))))
-(edges->pairs (arista '((8 1) (a 6) (6 a) (8 6))))
+(edges->pairs (arista '((@ x) (x *) (x ñ) (ñ x) (@ *))))
 (edges->pairs (arista '()))|#
 
 (define edges->pairs
